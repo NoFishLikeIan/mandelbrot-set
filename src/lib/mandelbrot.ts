@@ -1,4 +1,4 @@
-import { reduceWhile } from '../lib/generatorUtils'
+import { reduceWhile } from './generatorUtils'
 
 export type Complex = {
   re: number,

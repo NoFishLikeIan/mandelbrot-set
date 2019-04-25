@@ -1,3 +1,5 @@
+import { Complex } from "./mandelbrot";
+
 export function reduceWhile<T, A>(
   predicate: (i: number, acc: A) => boolean,
   fn: (acc: A, value: T) => A,
@@ -18,5 +20,20 @@ export function reduceWhile<T, A>(
   return {
     acc,
     iteration
+  }
+}
+
+export function * generateGrid(n: number, m: number): IterableIterator<[number, number]> {
+  for (let i = 0; i < n; i++) {
+    for (let j = 0; j < m; j++) {
+      yield [i, j]
+    }
+  }
+}
+
+export function * generateComplexGrid(n: number, m: number): IterableIterator<Complex> {
+  const grid = generateGrid(n,m)
+  for (let tuple of grid) {
+    yield { re: tuple[0], im: tuple[1] }
   }
 }

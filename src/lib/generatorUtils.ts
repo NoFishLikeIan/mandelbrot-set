@@ -6,16 +6,14 @@ export function reduceWhile<T, A>(
   ): {acc: A, iteration: number} {
   let acc = init
   let iteration = 0
+  let it = iterator.next()
 
-  while (predicate(iteration, acc)) {
-    let value = iterator.next().value
-    try {
-      acc = fn(acc, value)
-    } catch (err) {
-      debugger
-    }
-    iteration++
-  }
+  do {
+    let value = it.value
+    acc = fn(acc, value)
+    iteration ++
+    it = iterator.next(value)
+  } while (predicate(iteration, acc) && !it.done)
 
   return {
     acc,

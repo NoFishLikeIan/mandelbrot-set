@@ -21,7 +21,8 @@
     "suppressImplicitAnyIndexErrors": true,
     "noUnusedLocals": false,
     "forceConsistentCasingInFileNames": true,
-    "experimentalDecorators": true
+    "experimentalDecorators": true,
+    "downlevelIteration": true
   },
   "include": [
     "src"

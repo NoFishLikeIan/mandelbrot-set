@@ -23,7 +23,7 @@ export function reduceWhile<T, A>(
   }
 }
 
-export function * generateGrid(n: number, m: number): IterableIterator<[number, number]> {
+export function * generateRange(n: number, m: number): IterableIterator<[number, number]> {
   for (let i = 0; i < n; i++) {
     for (let j = 0; j < m; j++) {
       yield [i, j]
@@ -31,9 +31,31 @@ export function * generateGrid(n: number, m: number): IterableIterator<[number, 
   }
 }
 
-export function * generateComplexGrid(n: number, m: number): IterableIterator<Complex> {
-  const grid = generateGrid(n,m)
-  for (let tuple of grid) {
-    yield { re: tuple[0], im: tuple[1] }
+function gridFactory(from: number, to: number) {
+  const interval = to - from
+  return function * (size: number) {
+    const step = interval / size
+
+    for (let i = 0; i <= size; i++) {
+      for (let j = 0; j <= size; j++) {
+        yield [from + step * i, from + step * j]
+      }
+    }
+  }
+}
+
+export function generateComplexGrid(from: number, to: number): (size: number) => IterableIterator<Complex> {
+  const gridder = gridFactory(from, to)
+  return function * (size: number) {
+    const grid = gridder(size)
+    for (let tuple of grid) {
+      yield { re: tuple[0], im: tuple[1] }
+    }
+  }
+}
+
+export function * mapIterator<I, O>(iterator: IterableIterator<I>, fn: IterableIterator<O>) {
+  for (let input of iterator) {
+    yield fn.next(input)
   }
 }

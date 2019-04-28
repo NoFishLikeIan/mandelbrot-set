@@ -1,39 +1,45 @@
 import React from 'react'
-import { generateGrid } from '../lib/generatorUtils';
+import { scaleLinear } from 'd3-scale'
+
 import { mandelbrot, Complex } from "../lib/mandelbrot"
 import { generateComplexGrid } from '../lib/generatorUtils'
 import { mapMandelbrot } from '../lib/mapMandelset'
 
-const MAX_ITER = 100
-const MAX_M = 4
+const MAX_ITER = 20
+const MAX_M = 1000
+const SIDE = 800
+const FEW_ITER = ['#2980B9', '#EC7063']
+const GRID_EXTENT: [number, number] = [-2, 2]
+const GRID_DENSITY = 1000
+const fillRectSize = SIDE / GRID_DENSITY
+
+const iterationsColorScale =
+  scaleLinear<string, string>().domain([0, 20]).range(FEW_ITER)
+
+const plotScale = scaleLinear().domain(GRID_EXTENT).range([ 0, SIDE ])
 
 const divergeComplex = mandelbrot(MAX_ITER, MAX_M)
-const grid = generateComplexGrid(10,10)
+const grid = generateComplexGrid(...GRID_EXTENT)(GRID_DENSITY)
 
-interface State {
-  iteration: number
-}
-
-const rangeGenerator = generateGrid(10,10)
-
-export class App extends React.Component<{}, State> {
-
-  state = {
-    iteration: 0
-  }
+export class App extends React.Component {
+  canvas = React.createRef<HTMLCanvasElement>()
 
   componentDidMount() {
-    for (let i of mapMandelbrot(divergeComplex, grid)) {
-      console.log(i)
+    const ctx = this.canvas.current.getContext('2d')
+
+    for (let { iteration, c } of mapMandelbrot(divergeComplex, grid)) {
+      const x = plotScale(c.re)
+      const y = plotScale(c.im)
+      const color = iterationsColorScale(iteration)
+      ctx.fillStyle = color
+      ctx.fillRect(x, y, fillRectSize, fillRectSize)
     }
   }
 
   render() {
-    const { iteration } = this.state
-
     return (
-      <div>
-        <h2>{iteration}</h2>
+      <div className="mh7">
+        <canvas ref={this.canvas} width={SIDE} height={SIDE} />
       </div>
     )
   }

@@ -34,6 +34,8 @@ export function mandelbrot(maxIter: number, maxMagn: number) {
   return (c: Complex) => {
     let iterator = sumSquareGenerator(z0, c)
     const { iteration } = reduceWhile(diverges, sum, z0, iterator)
-    return iteration
+    return { iteration, c }
   }
 }
+
+export type MandelbrotReturn = ReturnType<typeof mandelbrot>

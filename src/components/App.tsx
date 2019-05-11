@@ -1,7 +1,7 @@
 import React from 'react'
 import { scaleLinear, ScaleLinear } from 'd3-scale'
 
-import { mandelbrot, didDivergePast } from '../lib/mandelbrot'
+import { mandelbrot } from '../lib/mandelbrot'
 import { generateComplexGrid } from '../lib/generator-utils'
 import {
   FEW_ITER,
@@ -72,8 +72,6 @@ export class App extends React.Component<{}, S> {
 
   componentDidMount() {
     this.computeCanvas()
-    const div = didDivergePast(10, 10)(2, { re: 2, im: 2 })
-    console.log({ div })
   }
 
   handleReset = () => this.setState({ extent: GRID_EXTENT }, this.computeCanvas)

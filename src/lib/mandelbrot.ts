@@ -14,7 +14,7 @@ const multiply = (first: Complex, second: Complex): Complex => ({
     im: first.re * second.im + second.re * first.im
   })
 
-const magn = (c: Complex) => sqrt(c.re*c.re + c.im*c.im)
+export const magn = (c: Complex) => sqrt(c.re*c.re + c.im*c.im)
 
 const didDivergePast =
   (maxIter: number, maxMagn: number) =>

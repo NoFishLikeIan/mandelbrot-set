@@ -1,25 +1,28 @@
-import { reduceWhile } from './generatorUtils'
+import { reduceWhile } from './generator-utils'
 
 export type Complex = {
-  re: number,
+  re: number
   im: number
 }
 
 const sqrt = Math.sqrt
 
-const sum = (first: Complex, second: Complex): Complex => ({ re: first.re + second.re, im: first.im + second.im })
+const sum = (first: Complex, second: Complex): Complex => ({
+  re: first.re + second.re,
+  im: first.im + second.im,
+})
 
 const multiply = (first: Complex, second: Complex): Complex => ({
-    re: first.re * second.re - first.im * second.im,
-    im: first.re * second.im + second.re * first.im
-  })
+  re: first.re * second.re - first.im * second.im,
+  im: first.re * second.im + second.re * first.im,
+})
 
-export const magn = (c: Complex) => sqrt(c.re*c.re + c.im*c.im)
+export const magn = (c: Complex) => sqrt(c.re * c.re + c.im * c.im)
 
-const didDivergePast =
-  (maxIter: number, maxMagn: number) =>
-    (iter: number, value: Complex): boolean => iter < maxIter && magn(value) < maxMagn
-
+const didDivergePast = (maxIter: number, maxMagn: number) => (
+  iter: number,
+  value: Complex
+): boolean => iter < maxIter && magn(value) < maxMagn
 
 function* sumSquareGenerator(z: Complex, c: Complex): IterableIterator<Complex> {
   while (1) {

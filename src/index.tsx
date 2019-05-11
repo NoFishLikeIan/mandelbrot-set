@@ -1,6 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { App } from './components/App'
+import { App } from './components/app'
 import 'modern-normalize'
 import '@accurat/tachyons-lite'
 import 'tachyons-extra'
@@ -16,7 +16,7 @@ renderApp()
 
 // Hot module reloading
 if (module.hot) {
-  module.hot.accept('components/App', () => {
+  module.hot.accept('components/app', () => {
     console.clear()
     renderApp()
   })

@@ -21,6 +21,14 @@
       "last 1 Safari version"
     ]
   },
+  "compilerOptions": {
+    "target": "es6",
+    "lib": [
+      "webworker",
+      "es6",
+      "scripthost"
+    ]
+  },
   "devDependencies": {
     "@types/d3": "^5.7.2",
     "@types/lodash": "^4.14.123",
@@ -36,11 +44,16 @@
   },
   "dependencies": {
     "@accurat/tachyons-lite": "^1.0.4",
+    "@thi.ng/math": "^1.2.3",
+    "@thi.ng/transducers": "^5.3.6",
     "d3": "^5.9.2",
     "lodash": "^4.17.11",
     "modern-normalize": "^0.5.0",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "tachyons-extra": "^1.1.3"
+  },
+  "resolutions": {
+    "**/core-js": "3.0.1"
   }
 }

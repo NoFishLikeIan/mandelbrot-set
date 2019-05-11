@@ -11,3 +11,4 @@ export const FEW_ITER = ['#2980B9', '#EC7063']
 export const GRID_DENSITY = 10
 export const fillW = W / GRID_DENSITY
 export const fillH = H / GRID_DENSITY
+export const TEXT_M = 15

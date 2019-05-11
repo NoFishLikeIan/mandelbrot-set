@@ -1,11 +1,29 @@
-import { Complex, magn } from './mandelbrot'
-
 import { ScaleLinear } from 'd3'
+import * as tx from '@thi.ng/math'
 
+import { Complex, magn } from './mandelbrot'
 import { mapMandelbrot } from './map-mandel-set'
-import { IVCords, W, H, fillW, fillH } from './constants'
+import { IVCords, W, H, fillW, fillH, TEXT_M } from './constants'
+import { max, toString, round } from 'lodash'
+import { getXs, getYs } from './ui'
 
 const getCoords = (xtn: IVCords, a: 'x' | 'y') => (a === 'x' ? [xtn[0], xtn[1]] : [xtn[2], xtn[3]])
+
+function fillAxisText(context: CanvasRenderingContext2D, extent: IVCords) {
+  context.font = '20px Georgia'
+  context.fillStyle = 'white'
+
+  const xs = getXs(extent)
+    .map(n => round(n, 2))
+    .map(toString)
+  context.fillText(xs[0], TEXT_M, H / 2)
+  context.fillText(xs[1], W - TEXT_M, H / 2)
+  const ys = getYs(extent)
+    .map(n => round(n, 2))
+    .map(toString)
+  context.fillText(ys[0], W / 2, TEXT_M)
+  context.fillText(ys[1], W / 2, H - TEXT_M)
+}
 
 export function drawCanvasFactory(
   gridGen: (x0: number, x1: number, y0: number, y1: number) => IterableIterator<Complex>,
@@ -26,12 +44,13 @@ export function drawCanvasFactory(
     let maxIter: number = 0
     let maxMagn: number = 0
 
-    for (let { iteration, c } of mapMandelbrot(diverge, grid)) {
+    for (const { iteration, c } of mapMandelbrot(diverge, grid)) {
       context.fillStyle = colorScale(iteration)
-      maxIter = Math.max(iteration, maxIter)
-      maxMagn = Math.max(magn(c), maxMagn)
+      maxIter = max([iteration, maxIter])
+      maxMagn = max([magn(c), maxMagn])
       context.fillRect(pltScaleX(c.re), pltScaleY(c.im), fillW, fillH)
     }
+    fillAxisText(context, extent)
     return { xScale: pltScaleX, yScale: pltScaleY }
   }
 }

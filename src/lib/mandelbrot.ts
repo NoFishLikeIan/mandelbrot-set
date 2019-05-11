@@ -19,19 +19,19 @@ const multiply = (first: Complex, second: Complex): Complex => ({
 
 export const magn = (c: Complex) => sqrt(c.re * c.re + c.im * c.im)
 
-const didDivergePast = (maxIter: number, maxMagn: number) => (
+export const didNotDiverge = (maxIter: number, maxMagn: number) => (
   iter: number,
   value: Complex
 ): boolean => iter < maxIter && magn(value) < maxMagn
 
 function* sumSquareGenerator(z: Complex, c: Complex): IterableIterator<Complex> {
-  while (1) {
+  while (true) {
     z = yield sum(multiply(z, z), c)
   }
 }
 
 export function mandelbrot(maxIter: number, maxMagn: number) {
-  const diverges = didDivergePast(maxIter, maxMagn)
+  const diverges = didNotDiverge(maxIter, maxMagn)
   const z0 = { re: 0, im: 0 }
 
   return (c: Complex) => {

@@ -1,7 +1,7 @@
 import React from 'react'
 import { scaleLinear, ScaleLinear } from 'd3-scale'
 
-import { mandelbrot } from '../lib/mandelbrot'
+import { mandelbrot, didDivergePast } from '../lib/mandelbrot'
 import { generateComplexGrid } from '../lib/generator-utils'
 import {
   FEW_ITER,
@@ -13,8 +13,10 @@ import {
   MAX_M,
   MAX_ITER,
 } from '../lib/constants'
+
 import { drawCanvasFactory } from '../lib/canvas'
-import { getCursorPosition } from '../lib/ui'
+import { getCursorPosition, rescaleFromClick } from '../lib/ui'
+import { throttle } from 'lodash'
 
 const iterationsColorScale = scaleLinear<string, string>()
   .domain([0, 10])
@@ -42,26 +44,18 @@ export class App extends React.Component<{}, S> {
 
   canvas = React.createRef<HTMLCanvasElement>()
 
-  handleDoubleClick = (evt: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
+  _handleDoubleClick = (evt: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
     const { extent, xScale, yScale } = this.state
     evt.preventDefault()
     const { x, y } = getCursorPosition(this.canvas.current, evt)
-    const xScaled = xScale.invert(x)
-    const yScaled = yScale.invert(y)
+    const xValue = xScale.invert(x)
+    const yValue = yScale.invert(y)
 
-    const newExtentDistance = (extent[1] - extent[0]) * 0.2
-
-    // const leftD = xScaled - extent[0]
-    // const rightD = extent[1] - xScaled
-
-    // const newLD = leftD * (1 - 0.8)
-    // const newRD = rightD * (1 - 0.8)
-
-    // const newExtent: [number, number] = [yScaled - newLD, xScaled + newRD]
-    // console.log(leftD, rightD, newExtent)
-
-    // this.setState({extent: newExtent}, this.computeCanvas)
+    const newExtent = rescaleFromClick(extent, [xValue, yValue], 0.5)
+    this.setState({ extent: newExtent }, this.computeCanvas)
   }
+
+  handleDoubleClick = throttle(this._handleDoubleClick, 500)
 
   computeCanvas() {
     const { extent, magn, iter, xScale, yScale } = this.state
@@ -78,6 +72,8 @@ export class App extends React.Component<{}, S> {
 
   componentDidMount() {
     this.computeCanvas()
+    const div = didDivergePast(10, 10)(2, { re: 2, im: 2 })
+    console.log({ div })
   }
 
   handleReset = () => this.setState({ extent: GRID_EXTENT }, this.computeCanvas)
@@ -86,7 +82,11 @@ export class App extends React.Component<{}, S> {
     return (
       <div>
         <div className="flex flex-column w-10 mh4" />
-        <button className="ma2" onClick={this.handleReset}>{`Reset size`}</button>
+        <button
+          className="ma2"
+          onClick={this.handleReset}
+          style={{ userSelect: 'none' }}
+        >{`Reset size`}</button>
         <canvas ref={this.canvas} width={W} height={H} onDoubleClick={this.handleDoubleClick} />
       </div>
     )

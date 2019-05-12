@@ -2,7 +2,7 @@ export type IVCords = [number, number, number, number]
 
 export const MAX_ITER = 10
 export const MAX_M = 20
-export const GRID_EXTENT: IVCords = [-2, 2, -2, 2] // [-0.41, 0, -1.32, -0.32] //
+export const GRID_EXTENT: IVCords = [-3, 1, -2, 2] // [-0.41, 0, -1.32, -0.32] //
 export const MAX_MAGN_SCALE = 3
 export const MAX_MAGN_ITER = MAX_ITER
 

@@ -19,8 +19,9 @@ import {
 
 import { drawCanvasFactory } from '../lib/canvas'
 import { getCursorPosition, rescaleFromClick } from '../lib/ui'
-import { throttle } from 'lodash'
+import { throttle, toNumber } from 'lodash'
 import { insertAt } from '../lib/arr'
+import { ControlPanel, SliderInput } from './control-panel'
 
 const floor = Math.floor
 
@@ -43,22 +44,26 @@ interface S {
   magn: number
   iter: number
   newColors: string[]
+  factor: number
+  recompute: boolean
 }
 export class App extends React.Component<{}, S> {
   state = {
     extent: GRID_EXTENT,
     xScale: scaleLinear().range([0, W]),
     yScale: scaleLinear().range([0, H]),
-    magn: MAX_M,
-    iter: MAX_ITER,
     colorScale: genInitColorScale(),
     newColors: A_LIST_OF_COLORS,
+    recompute: true,
+    iter: MAX_ITER,
+    magn: MAX_M,
+    factor: 1.1,
   }
 
   canvas = React.createRef<HTMLCanvasElement>()
 
   _handleDoubleClick = (evt: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
-    const { extent, xScale, yScale, colorScale, newColors } = this.state
+    const { extent, xScale, yScale, colorScale, newColors, factor } = this.state
     evt.preventDefault()
     const { x, y } = getCursorPosition(this.canvas.current, evt)
     const xValue = xScale.invert(x)
@@ -68,7 +73,7 @@ export class App extends React.Component<{}, S> {
 
     const currentDomain = colorScale.domain()
     const currentRange = colorScale.range()
-    const rescaledDomain = currentDomain.map(n => n * 1.1)
+    const rescaledDomain = currentDomain.map(n => n * factor)
 
     const [first, ...addColors] = newColors
     const n = floor(rescaledDomain.length / 2)
@@ -76,19 +81,27 @@ export class App extends React.Component<{}, S> {
     const newDomain = insertAt(rescaledDomain, n, (rescaledDomain[n] + rescaledDomain[n + 1]) / 2)
     const newColorRange = insertAt(currentRange, n, first)
 
-    console.log('range: ', ...newColorRange)
-    console.log('domain: ', ...newDomain)
-
     const newColorScale = colorScale.domain(newDomain).range(newColorRange)
     this.setState(
-      { extent: newExtent, colorScale: newColorScale, newColors: addColors },
+      { extent: newExtent, colorScale: newColorScale, newColors: addColors, recompute: false },
       this.computeCanvas
     )
   }
 
   handleDoubleClick = throttle(this._handleDoubleClick, 500)
 
-  computeCanvas() {
+  handleReset = () =>
+    this.setState(
+      { extent: GRID_EXTENT, colorScale: genInitColorScale(), recompute: false },
+      this.computeCanvas
+    )
+
+  handleFactor = (evt: SliderInput) => this.setState({ factor: toNumber(evt.target.value) })
+  handleMagn = (evt: SliderInput) => this.setState({ magn: toNumber(evt.target.value) })
+  handleIter = (evt: SliderInput) => this.setState({ iter: toNumber(evt.target.value) })
+  handleRecompute = () => this.setState({ recompute: false }, this.computeCanvas)
+
+  computeCanvas = () => {
     const { extent, magn, iter, xScale, yScale, colorScale } = this.state
     const ctx = this.canvas.current.getContext('2d')
     const { xScale: exitX, yScale: exitY } = drawCavas(
@@ -99,26 +112,38 @@ export class App extends React.Component<{}, S> {
       extent,
       colorScale
     )
-    this.setState({ xScale: exitX, yScale: exitY })
+    this.setState({ xScale: exitX, yScale: exitY, recompute: true })
   }
 
   componentDidMount() {
     this.computeCanvas()
   }
 
-  handleReset = () =>
-    this.setState({ extent: GRID_EXTENT, colorScale: genInitColorScale() }, this.computeCanvas)
-
   render() {
+    const { factor, magn, iter, recompute } = this.state
+    const status = recompute ? 'Computed!' : 'Computing...'
     return (
-      <div>
-        <div className="flex flex-column w-10 mh4" />
-        <button
-          className="ma2"
-          onClick={this.handleReset}
-          style={{ userSelect: 'none' }}
-        >{`Reset size`}</button>
-        <canvas ref={this.canvas} width={W} height={H} onDoubleClick={this.handleDoubleClick} />
+      <div className="flex justify-between">
+        <div className="flex flex-column">
+          <ControlPanel
+            handleFactor={{ fn: this.handleFactor, value: factor }}
+            handleIter={{ fn: this.handleIter, value: iter }}
+            handleMagn={{ fn: this.handleMagn, value: magn }}
+            handleRecompute={this.handleRecompute}
+            handleReset={this.handleReset}
+          />
+          {/* <div style={{ userSelect: 'none' }} className="ma4 f4 b">
+            {status}
+          </div> */}
+        </div>
+
+        <canvas
+          className="mh4"
+          ref={this.canvas}
+          width={W}
+          height={H}
+          onDoubleClick={this.handleDoubleClick}
+        />
       </div>
     )
   }

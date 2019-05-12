@@ -15,6 +15,7 @@ interface InputProps {
 }
 
 interface ControlProps {
+  className?: string
   handleReset: () => void
   handleRecompute: () => void
   handleFactor: InputObj
@@ -34,7 +35,7 @@ const Input: FunctionComponent<InputProps> = ({ deal, title, className, min, max
 )
 
 export const ControlPanel: FunctionComponent<ControlProps> = props => (
-  <div className="flex flex-column ma2 pa3 align-betwee">
+  <div className={`flex flex-column ma2 pa3 align-between ${props.className}`}>
     {/* Recompute */}
     <button
       className="h2 w5 mv2"

@@ -127,8 +127,17 @@ export class App extends React.Component<{}, S> {
     const status = recompute ? 'Computed!' : 'Computing...'
     return (
       <div className="flex justify-between">
-        <div className="flex flex-column">
+        <div className="mh2 pa2 flex flex-column">
+          <h1>Mandelbrot set</h1>
+          <span>
+            My stupid implementation! Double click to zoom and play around with the params. And if
+            you care to know more click{' '}
+            <a target="_blank" href={'https://en.wikipedia.org/wiki/Mandelbrot_set'}>
+              here
+            </a>
+          </span>
           <ControlPanel
+            className="b-black ba mv4"
             handleFactor={{ fn: this.handleFactor, value: factor }}
             handleIter={{ fn: this.handleIter, value: iter }}
             handleMagn={{ fn: this.handleMagn, value: magn }}

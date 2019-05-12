@@ -46,6 +46,7 @@ interface S {
   newColors: string[]
   factor: number
   recompute: boolean
+  click: number
 }
 export class App extends React.Component<{}, S> {
   state = {
@@ -58,18 +59,19 @@ export class App extends React.Component<{}, S> {
     iter: MAX_ITER,
     magn: MAX_M,
     factor: 1.1,
+    click: 0.5,
   }
 
   canvas = React.createRef<HTMLCanvasElement>()
 
   _handleDoubleClick = (evt: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
-    const { extent, xScale, yScale, colorScale, newColors, factor } = this.state
+    const { extent, xScale, yScale, colorScale, newColors, factor, click } = this.state
     evt.preventDefault()
     const { x, y } = getCursorPosition(this.canvas.current, evt)
     const xValue = xScale.invert(x)
     const yValue = yScale.invert(y)
 
-    const newExtent = rescaleFromClick(extent, [xValue, yValue], 0.5)
+    const newExtent = rescaleFromClick(extent, [xValue, yValue], click)
 
     const currentDomain = colorScale.domain()
     const currentRange = colorScale.range()
@@ -98,6 +100,7 @@ export class App extends React.Component<{}, S> {
 
   handleFactor = (evt: SliderInput) => this.setState({ factor: toNumber(evt.target.value) })
   handleMagn = (evt: SliderInput) => this.setState({ magn: toNumber(evt.target.value) })
+  handleClickF = (evt: SliderInput) => this.setState({ click: toNumber(evt.target.value) })
   handleIter = (evt: SliderInput) => this.setState({ iter: toNumber(evt.target.value) })
   handleRecompute = () => this.setState({ recompute: false }, this.computeCanvas)
 
@@ -120,7 +123,7 @@ export class App extends React.Component<{}, S> {
   }
 
   render() {
-    const { factor, magn, iter, recompute } = this.state
+    const { factor, magn, iter, recompute, click } = this.state
     const status = recompute ? 'Computed!' : 'Computing...'
     return (
       <div className="flex justify-between">
@@ -131,6 +134,7 @@ export class App extends React.Component<{}, S> {
             handleMagn={{ fn: this.handleMagn, value: magn }}
             handleRecompute={this.handleRecompute}
             handleReset={this.handleReset}
+            handleClickF={{ fn: this.handleClickF, value: click }}
           />
           {/* <div style={{ userSelect: 'none' }} className="ma4 f4 b">
             {status}

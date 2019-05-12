@@ -20,6 +20,7 @@ interface ControlProps {
   handleFactor: InputObj
   handleMagn: InputObj
   handleIter: InputObj
+  handleClickF: InputObj
 }
 
 const Input: FunctionComponent<InputProps> = ({ deal, title, className, min, max, step }) => (
@@ -54,6 +55,14 @@ export const ControlPanel: FunctionComponent<ControlProps> = props => (
       min={0.4}
       max={3}
       step={0.1}
+    />
+    <Input
+      className="mv2"
+      step={0.05}
+      deal={props.handleClickF}
+      title={'Scaling factor'}
+      min={0.05}
+      max={1}
     />
     <Input className="mv2" deal={props.handleMagn} title={'Max magnitude'} min={1} max={1000} />
     <Input className="mv2" deal={props.handleIter} title={'Max iterations'} min={5} max={1000} />

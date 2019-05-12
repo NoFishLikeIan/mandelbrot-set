@@ -15,9 +15,9 @@ function renderApp() {
 renderApp()
 
 // Hot module reloading
-if (module.hot) {
-  module.hot.accept('components/app', () => {
-    console.clear()
-    renderApp()
-  })
-}
+// if (module.hot) {
+//   module.hot.accept('components/app', () => {
+//     console.clear()
+//     renderApp()
+//   })
+// }

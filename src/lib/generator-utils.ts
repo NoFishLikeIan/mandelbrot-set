@@ -37,19 +37,19 @@ function gridFactory(x0: number, x1: number, y0: number, y1: number) {
   return function*(size: number) {
     const hstep = hint / size
     const vstep = vint / size
-
-    for (let i = 0; i <= size / hstep; i++) {
-      for (let j = 0; j <= size / vstep; j++) {
+    for (let i = 0; i <= size; i++) {
+      for (let j = 0; j <= size; j++) {
         yield [x0 + hstep * i, y0 + vstep * j]
       }
     }
   }
 }
+
 export function generateComplexGrid(size: number) {
   return function*(x0: number, x1: number, y0: number, y1: number): IterableIterator<Complex> {
-    const gridder = gridFactory(x0, x1, y0, y1)
-    const grid = gridder(size)
+    const grid = gridFactory(x0, x1, y0, y1)(size)
     for (let tuple of grid) {
+      // console.log('tuple')
       yield { re: tuple[0], im: tuple[1] }
     }
   }

@@ -1,6 +1,6 @@
 # Mandelbrot Set
 
-A simple mandelbrot set built with generators! You can see it deployed [here](mandelbrot-gen-ian.netlify.com)!
+A simple mandelbrot set built with generators! You can see it deployed [here](https://mandelbrot-gen-ian.netlify.com/)!
 
 ## Props to Marco Fugaro
 
